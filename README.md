@@ -38,8 +38,8 @@ names, while keeping everything else useful for training.
 
 | Approach | Published systems | How the audio is regenerated | Result on the example call |
 |---|---|---|---|
-| Voice anonymization | VoicePrivacy 2024 baselines B1, B3 to B6 [[1]](#references); kNN-VC [[2]](#references) | Extract content features (ASR bottleneck, phones, HuBERT or WavLM units), then **resynthesize the whole utterance** with an NSF vocoder, FastSpeech2 + HiFi-GAN, an EnCodec token model, or HiFi-GAN | New voice, but *"Maria Lopez"*, *"Lyon"* and *"Dr. Martin"* are still spoken, word for word |
-| Signal processing | McAdams coefficient, VPC B2 [[3]](#references) | LPC pole shifting, no model | Same as above, and weak against an informed attacker |
+| Voice anonymization | VoicePrivacy baselines: B1, B3 to B6 (2024) [[1]](#references), B3 to B5 and multilingual BM1 to BM3 (2026) [[12]](#references); kNN-VC [[2]](#references) | Extract content features (ASR bottleneck, phones, HuBERT or WavLM units, Whisper transcripts), then **resynthesize the whole utterance** with an NSF vocoder, FastSpeech2 + HiFi-GAN, IMS Toucan + HiFi-GAN, an EnCodec token model, or HiFi-GAN | New voice, but *"Maria Lopez"*, *"Lyon"* and *"Dr. Martin"* are still spoken, word for word |
+| Signal processing | McAdams coefficient, VPC 2024 and 2026 B2 [[3]](#references) | LPC pole shifting, no model | Same as above, and weak against an informed attacker |
 | Content masking | Phone-code masking [[4]](#references) | Replace sensitive spans with masked or unintelligible audio | Names removed, but the audio and its transcript are broken at those spans, which hurts ASR training |
 | Transcript rewriting | NER substitution [[5]](#references), LLM paraphrasing [[6]](#references), style paraphrasing [[7]](#references) | ASR, edit or paraphrase the text, then **text-to-speech for the whole utterance** | Names replaced, but the entire call is now clean TTS: channel, noise, accent, timing and disfluencies are gone |
 | Utterance routing | JHU HLTCOE [[8]](#references) | Each utterance goes either through Whisper + VITS TTS or through kNN-VC | Every frame is regenerated; there is no way to edit only the names |
@@ -79,7 +79,7 @@ season"* edited to *"**David Jones**"* and *"**Victor Smith**"*.
 - **NER-triggered frame-level replacement.** Frames aligned to a detected entity always take Stream B tokens, regenerated from the edited text. They are spliced back with an 8-frame crossfade, which keeps the surrounding prosody intact.
 - **Cosine similarity gating.** A phoneme-derived token is accepted only if its reconstruction is close enough to the encoder's (τ = 0.6). This rejects tokens hallucinated from forced-alignment errors on noisy or accented speech.
 
-**Headline result (VoicePrivacy 2024, β = 0.7):** EER **42.54%** (within one point of the challenge's top submission) with WER **3.73%**.
+**Headline result (VoicePrivacy 2024 protocol, β = 0.7):** EER **42.54%** (within one point of the challenge's top submission) with WER **3.73%**.
 
 ## Method
 
@@ -398,12 +398,23 @@ VoxPopuli and VCTK. It is filtered with a MOS policy (wv-mos > 3.3,
 
 ## Evaluation
 
-Privacy (EER, semi-informed attacker with ECAPA-TDNN retrained on anonymized
-data), utility (WER with Whisper `medium.en`) and emotion (UAR on IEMOCAP)
-follow the official
-[VoicePrivacy Challenge 2024 toolkit](https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024).
-Anonymize the challenge data with `static_infer_batch.py`, then run the
-toolkit's evaluation on the outputs.
+The paper follows the VoicePrivacy 2024 protocol
+([toolkit](https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024)):
+EER from a semi-informed ECAPA-TDNN attacker fine-tuned on anonymized
+*train-clean-360*, and UAR on IEMOCAP. The paper computes WER with Whisper
+`medium.en`, whereas the challenge toolkits use a wav2vec2 ASR model trained on
+LibriSpeech-960, so toolkit WERs will differ from the table above. Anonymize
+the challenge data with `static_infer_batch.py`, then run the toolkit's
+evaluation on the outputs.
+
+> **VoicePrivacy 2026.** The 2026 plan [[12]](#references) keeps the Track 1
+> data and utility models but uses a stronger attacker: WavLM-ECAPA pretrained on
+> about 9k hours of voice-converted speech, then fine-tuned on anonymized data,
+> scored on mixed same- and cross-gender trials. Our EERs were measured with the
+> 2024 attacker and are not directly comparable. The 2026 rules also restrict
+> training to an approved list of models and data. Our released models use some
+> resources outside that list (for example TED-LIUM and Transphone), so they are
+> not eligible for a 2026 submission as they stand.
 
 ## Limitations
 
@@ -443,6 +454,7 @@ you release data.
 9. H. Bai et al., "A³T: Alignment-Aware Acoustic and Text Pretraining for Speech Synthesis and Editing," ICML 2022, [arXiv:2203.09690](https://arxiv.org/abs/2203.09690).
 10. Z. Jiang et al., "FluentSpeech: Stutter-Oriented Automatic Speech Editing with Context-Aware Diffusion Models," Findings of ACL 2023, [arXiv:2305.13612](https://arxiv.org/abs/2305.13612).
 11. P. Peng et al., "VoiceCraft: Zero-Shot Speech Editing and Text-to-Speech in the Wild," ACL 2024, [arXiv:2403.16973](https://arxiv.org/abs/2403.16973).
+12. X. Miao, N. Tomashenko, R. Arefeen et al., "The VoicePrivacy 2026 Challenge Evaluation Plan," version 2.0, 1 September 2026, [PDF](https://www.voiceprivacychallenge.org/vp2026/docs/VPC_2026_sept01.pdf).
 
 ## License and acknowledgements
 
