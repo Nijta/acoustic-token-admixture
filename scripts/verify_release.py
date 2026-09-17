@@ -315,23 +315,34 @@ def check_determinism(si, wav):
            "identical output" if same else "outputs differ between runs with the same seed")
 
 
+# Settings that regenerate the published speaker-consistency clips from male sources.
+PUBLISHED_SETTINGS = dict(gender="m", spk_cluster="cluster_dense", n_speaker=1,
+                          admixture_ratio=0.7, pitch_f=0.75, db=2.0)
+
+
 @check("reproduce published samples")
-def check_published(si, pairs, out_dir):
-    """Regenerate published clips with their seed; the voice should match the published one."""
-    sims, cross = [], []
+def check_published(si, pairs, genders, out_dir):
+    """Regenerate published clips with their seed and PUBLISHED_SETTINGS.
+
+    A regenerated voice should match the published one about as well as two
+    published clips with the same seed match each other (about 0.84).
+    """
+    ps = PUBLISHED_SETTINGS
+    by_gender = {}
     for src, published, seed in pairs:
         common, _ = si.compute_common_features(src, False, 0.0, "m", "None", 2, 0.0, 0.0)
-        arr, sr, *_ = si.seed_specific_anonymization(common, False, 0.7, None, "None", 2, seed, 2.0, 0.75)
-        out = os.path.join(out_dir, "reproduce", f"{os.path.basename(published)}")
+        arr, sr, *_ = si.seed_specific_anonymization(
+            common, False, ps["admixture_ratio"], ps["gender"], ps["spk_cluster"], ps["n_speaker"],
+            seed, ps["db"], ps["pitch_f"])
+        out = os.path.join(out_dir, "reproduce", os.path.basename(published))
         os.makedirs(os.path.dirname(out), exist_ok=True)
         sf.write(out, arr, sr)
-        sims.append(ecapa_similarity(si, out, published))
-        cross.append(ecapa_similarity(si, out, src))
-    s, c = float(np.mean(sims)), float(np.mean(cross))
-    status = "PASS" if s > 0.6 and s > c + 0.2 else "WARN"
-    record("reproduce published samples", status,
-           f"{len(pairs)} clips; similarity of regenerated voice to published voice vs to source",
-           to_published=round(s, 3), to_source=round(c, 3))
+        by_gender.setdefault(genders.get(src, "?"), []).append(ecapa_similarity(si, out, published))
+    for g, sims in sorted(by_gender.items()):
+        s = float(np.mean(sims))
+        record(f"reproduce published samples ({g} sources)", "PASS" if s > 0.7 else "WARN",
+               f"{len(sims)} clips regenerated with {ps}; ECAPA similarity to the published clip",
+               mean_sim=round(s, 3), min_sim=round(float(np.min(sims)), 3))
 
 
 @check("published sample settings sweep")
@@ -541,6 +552,8 @@ def main():
     ap.add_argument("--max-inputs", type=int, default=20)
     ap.add_argument("--published-dir", default=None,
                     help="Folder with published <input>_seed_<seed>_anon.wav clips to reproduce.")
+    ap.add_argument("--sweep", action="store_true",
+                    help="Also search 36 pseudospeaker settings against the published clips (slow).")
     ap.add_argument("--alt-pool", default=None,
                     help="Extra pool directory to include in the published-settings sweep.")
     ap.add_argument("--vm-usd-per-hour", type=float, default=0.0)
@@ -584,12 +597,13 @@ def main():
         pairs = []
         for w, _ in inputs:
             stem = os.path.basename(w)[:-4].replace("_orig", "")
-            for p in sorted(glob.glob(os.path.join(args.published_dir, f"{stem}_seed_*_anon.wav")))[:2]:
+            for p in sorted(glob.glob(os.path.join(args.published_dir, f"{stem}_seed_*_anon.wav")))[:1]:
                 pairs.append((w, p, int(re.search(r"_seed_(\d+)_", p).group(1))))
+        genders = {w: m.get("gender") for w, m in inputs}
         if pairs:
-            check_published(si, pairs[:10], args.out_dir)
+            check_published(si, pairs, genders, args.out_dir)
+        if pairs and args.sweep:
             # two male and two female sources, one published seed each
-            genders = {w: m.get("gender") for w, m in inputs}
             by_g = {"m": [], "f": []}
             for src, pub, seed in pairs:
                 g = genders.get(src)
