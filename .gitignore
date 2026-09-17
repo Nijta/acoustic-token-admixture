@@ -1,0 +1,24 @@
+# Model weights and speaker pool (download separately, see README)
+models/
+MODELS/
+POOL/
+exp/
+data/
+
+# Runtime outputs
+outputs/
+tmp/
+*.npz
+session.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/

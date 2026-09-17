@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acoustic Token Admixture Samples</title>
+  <meta name="description" content="Audio samples for the Interspeech 2026 paper: Acoustic token admixture for joint speaker and content anonymization." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --ink: #1f2933;
+      --muted: #52606d;
+      --line: #d9e2ec;
+      --accent: #243b53;
+      --accent-soft: #e4e7eb;
+      --orig-bg: #f0f4f8;
+      --player-bg: #fafbfc;
+      --orig-line: #cbd2d9;
+      --header-bg: rgba(255, 255, 255, 0.96);
+      --max: 1080px;
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111418;
+        --surface: #181c21;
+        --ink: #e4e7eb;
+        --muted: #9aa5b1;
+        --line: #2b323a;
+        --accent: #9fb3c8;
+        --accent-soft: #243140;
+        --orig-bg: #1d2530;
+        --player-bg: #14181c;
+        --orig-line: #3e4c59;
+        --header-bg: rgba(17, 20, 24, 0.96);
+        color-scheme: dark;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Source Sans 3", "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      background: var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--accent);
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .nav a:hover { color: var(--accent); }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    .intro {
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .intro h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .intro p {
+      margin: 0 0 0.6rem;
+      max-width: 72ch;
+      color: var(--muted);
+    }
+
+    .intro .venue {
+      margin: 0 0 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .intro .authors { color: var(--ink); }
+
+    .links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
+
+    .links a {
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .links a:hover { border-color: var(--accent); }
+
+    footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 2.5rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer a { text-decoration: underline; }
+
+    .section {
+      margin-top: 2.25rem;
+      scroll-margin-top: 4rem;
+    }
+
+    .section-head {
+      margin-bottom: 1rem;
+    }
+
+    .section-label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .section-head h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .note {
+      display: inline-block;
+      margin-top: 0.55rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .matrix-hint {
+      margin: 0 0 0.85rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .sample {
+      margin-bottom: 1rem;
+      padding: 1rem 1.05rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .sample-title {
+      margin: 0 0 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .transcript {
+      margin: 0 0 0.65rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .edit-notes {
+      margin: 0 0 0.75rem;
+      padding: 0;
+      list-style: none;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .edit-notes li + li { margin-top: 0.15rem; }
+
+    .edit-notes strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .players {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .players.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .players.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .player {
+      min-width: 0;
+      padding: 0.55rem 0.6rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--player-bg);
+    }
+
+    .player.orig {
+      background: var(--orig-bg);
+      border-color: var(--orig-line);
+    }
+
+    .player-label {
+      margin-bottom: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    audio {
+      width: 100%;
+      height: 30px;
+    }
+
+    @media (max-width: 960px) {
+      .players.cols-5,
+      .players.cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .players.cols-5,
+      .players.cols-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">Acoustic Token Admixture</div>
+      <nav class="nav" aria-label="Sections">
+        <a href="#speaker-consistency">Speaker consistency</a>
+        <a href="#speech-editing">Speech editing</a>
+        <a href="#admixture">Admixture effect</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="venue">Interspeech 2026 &middot; Audio samples</p>
+      <h1>Acoustic token admixture for joint speaker and content anonymization</h1>
+      <p class="authors">Ali Golmakani, Seyed Ahmad Hosseini, Omar Manil Bendali, Emmanuel Vincent, Brij Mohan Lal Srivastava</p>
+      <p>
+        Our system hides two things in a recording: <em>who</em> is speaking (biometric identity) and <em>what</em> identifies them (named entities).
+        It works on a single stream of RVQ-Whisper acoustic tokens.
+        Encoder-derived tokens and phoneme-conditioned tokens are mixed frame by frame, with mixing ratio &beta; and a cosine-similarity gate &tau; = 0.6.
+        When NER flags a sensitive span, the system regenerates only those frames and leaves the surrounding prosody untouched.
+        On VoicePrivacy 2024 it reaches EER 42.54% with WER 3.73% at &beta; = 0.7.
+      </p>
+      <p>All anonymized outputs below are 16&nbsp;kHz BigVGAN vocoder outputs. Use headphones for the fairest comparison.</p>
+      <div class="links">
+        <a href="https://github.com/Nijta/acoustic-token-admixture">Code on GitHub</a>
+        <a href="https://github.com/Nijta/acoustic-token-admixture#citation">Cite</a>
+        <a href="https://nijta.com">Nijta</a>
+      </div>
+    </section>
+
+    <section class="section" id="speaker-consistency">
+      <div class="section-head">
+        <span class="section-label">Section 1</span>
+        <h2>Anonymization and speaker consistency</h2>
+        <p>
+          Each utterance is anonymized with four pseudospeakers, each fixed by a random seed (spk1 to spk4 are seeds 3358, 4930, 5192 and 5978).
+          Listen down a column to hear one pseudospeaker stay consistent across different content.
+          Listen along a row to hear the same content rendered by different pseudospeakers.
+        </p>
+        <div class="note">&beta; = 0.7</div>
+      </div>
+
+      <p class="matrix-hint">Columns: Original · spk1 · spk2 · spk3 · spk4</p>
+
+      <article class="sample">
+        <h3 class="sample-title">Input 1</h3>
+        <div class="players cols-5">
+          <div class="player orig">
+            <div class="player-label">Original</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_01_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk1</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_01_seed_3358_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk2</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_01_seed_4930_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk3</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_01_seed_5192_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk4</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_01_seed_5978_anon.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Input 2</h3>
+        <div class="players cols-5">
+          <div class="player orig">
+            <div class="player-label">Original</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_02_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk1</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_02_seed_3358_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk2</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_02_seed_4930_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk3</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_02_seed_5192_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk4</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_02_seed_5978_anon.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Input 3</h3>
+        <div class="players cols-5">
+          <div class="player orig">
+            <div class="player-label">Original</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_09_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk1</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_09_seed_3358_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk2</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_09_seed_4930_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk3</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_09_seed_5192_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk4</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_09_seed_5978_anon.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Input 4</h3>
+        <div class="players cols-5">
+          <div class="player orig">
+            <div class="player-label">Original</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_10_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk1</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_10_seed_3358_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk2</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_10_seed_4930_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk3</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_10_seed_5192_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">spk4</div>
+            <audio controls preload="none" src="audio/speaker_consistency/input_10_seed_5978_anon.wav"></audio>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="speech-editing">
+      <div class="section-head">
+        <span class="section-label">Section 2</span>
+        <h2>Speech editing</h2>
+        <p>
+          NER-triggered content replacement (paper, Sec. 2.3).
+          <strong>orig</strong> is the source recording and <strong>anon</strong> is the anonymized version with unchanged content.
+          <strong>v1</strong> and <strong>v2</strong> replace the detected entity with a different name or place.
+          Only the frames of the entity span are regenerated.
+          They are spliced back with an 8-frame (about 160&nbsp;ms) crossfade, so the pseudospeaker and the surrounding prosody stay intact.
+        </p>
+        <div class="note">&beta; = 0.7 &middot; NER span replacement</div>
+      </div>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 1</h3>
+        <p class="transcript">“The American planes maneuvered in such a way as to encircle the Taube.”</p>
+        <ul class="edit-notes">
+          <li><strong>v1:</strong> American → Australian</li>
+          <li><strong>v2:</strong> American → English</li>
+        </ul>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/speech_editing/sample1_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">anon</div>
+            <audio controls preload="none" src="audio/speech_editing/sample1_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v1</div>
+            <audio controls preload="none" src="audio/speech_editing/sample1_v1.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v2</div>
+            <audio controls preload="none" src="audio/speech_editing/sample1_v2.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 2</h3>
+        <p class="transcript">“As they sat down, a burst of applause drew Alexander's attention to the stage.”</p>
+        <ul class="edit-notes">
+          <li><strong>v1:</strong> Alexander → William</li>
+          <li><strong>v2:</strong> Alexander → Jonathan</li>
+        </ul>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/speech_editing/sample2_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">anon</div>
+            <audio controls preload="none" src="audio/speech_editing/sample2_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v1</div>
+            <audio controls preload="none" src="audio/speech_editing/sample2_v1.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v2</div>
+            <audio controls preload="none" src="audio/speech_editing/sample2_v2.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 3</h3>
+        <p class="transcript">“The power and enterprise of Spain were directed to wider and richer fields.”</p>
+        <ul class="edit-notes">
+          <li><strong>v1:</strong> Spain → France</li>
+          <li><strong>v2:</strong> Spain → Germany</li>
+        </ul>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/speech_editing/sample3_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">anon</div>
+            <audio controls preload="none" src="audio/speech_editing/sample3_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v1</div>
+            <audio controls preload="none" src="audio/speech_editing/sample3_v1.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v2</div>
+            <audio controls preload="none" src="audio/speech_editing/sample3_v2.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 4</h3>
+        <p class="transcript">“However, Jaime Alguersuari failed to score any points in the season.”</p>
+        <ul class="edit-notes">
+          <li><strong>v1:</strong> Jaime Alguersuari → David Jones</li>
+          <li><strong>v2:</strong> Jaime Alguersuari → Victor Smith</li>
+        </ul>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/speech_editing/sample4_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">anon</div>
+            <audio controls preload="none" src="audio/speech_editing/sample4_anon.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v1</div>
+            <audio controls preload="none" src="audio/speech_editing/sample4_v1.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">v2</div>
+            <audio controls preload="none" src="audio/speech_editing/sample4_v2.wav"></audio>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="admixture">
+      <div class="section-head">
+        <span class="section-label">Section 3</span>
+        <h2>Admixture effect</h2>
+        <p>
+          The same utterance anonymized at &beta; = 0.0, 0.7 and 1.0.
+          &beta; is the probability that a frame uses a phoneme-derived token instead of the encoder-derived token.
+          At &beta; = 0.0 the only change is the pseudospeaker substitution, so more of the source speaking style survives.
+          Higher &beta; removes more residual speaker cues from the token stream.
+          On VoicePrivacy 2024, EER rises from 23.0% at &beta; = 0.0 to 42.54% at &beta; = 0.7.
+          &beta; = 1.0 is included to hear the fully phoneme-derived end of the range; the paper does not report it.
+        </p>
+      </div>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 1</h3>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/admixture/sample_003_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_003_admix_00.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.7</div>
+            <audio controls preload="none" src="audio/admixture/sample_003_admix_07.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 1.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_003_admix_10.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 2</h3>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/admixture/sample_015_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_015_admix_00.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.7</div>
+            <audio controls preload="none" src="audio/admixture/sample_015_admix_07.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 1.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_015_admix_10.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 3</h3>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/admixture/sample_025_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_025_admix_00.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.7</div>
+            <audio controls preload="none" src="audio/admixture/sample_025_admix_07.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 1.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_025_admix_10.wav"></audio>
+          </div>
+        </div>
+      </article>
+
+      <article class="sample">
+        <h3 class="sample-title">Sample 4</h3>
+        <div class="players cols-4">
+          <div class="player orig">
+            <div class="player-label">orig</div>
+            <audio controls preload="none" src="audio/admixture/sample_033_orig.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_033_admix_00.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 0.7</div>
+            <audio controls preload="none" src="audio/admixture/sample_033_admix_07.wav"></audio>
+          </div>
+          <div class="player">
+            <div class="player-label">&beta; = 1.0</div>
+            <audio controls preload="none" src="audio/admixture/sample_033_admix_10.wav"></audio>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    Original recordings come from public speech corpora.
+    Code, usage instructions and citation details are in the
+    <a href="https://github.com/Nijta/acoustic-token-admixture">GitHub repository</a>.
+    &copy; 2026 Nijta.
+  </footer>
+
+  <script>
+    document.addEventListener("play", (e) => {
+      if (!(e.target instanceof HTMLAudioElement)) return;
+      document.querySelectorAll("audio").forEach((a) => {
+        if (a !== e.target) a.pause();
+      });
+    }, true);
+  </script>
+</body>
+</html>

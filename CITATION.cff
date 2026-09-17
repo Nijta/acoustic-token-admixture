@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this code or the audio samples, please cite the paper below."
+title: "Acoustic token admixture for joint speaker and content anonymization"
+repository-code: "https://github.com/Nijta/acoustic-token-admixture"
+license: MIT
+authors:
+  - given-names: Ali
+    family-names: Golmakani
+    affiliation: "Nijta SAS, France"
+  - given-names: Seyed Ahmad
+    family-names: Hosseini
+    affiliation: "Nijta SAS, France"
+  - given-names: Omar Manil
+    family-names: Bendali
+    affiliation: "Nijta SAS, France"
+  - given-names: Emmanuel
+    family-names: Vincent
+    affiliation: "Nijta SAS, France; Université de Lorraine, CNRS, Inria, LORIA, Nancy, France"
+  - given-names: Brij Mohan Lal
+    family-names: Srivastava
+    affiliation: "Nijta SAS, France"
+preferred-citation:
+  type: conference-paper
+  title: "Acoustic token admixture for joint speaker and content anonymization"
+  authors:
+    - given-names: Ali
+      family-names: Golmakani
+    - given-names: Seyed Ahmad
+      family-names: Hosseini
+    - given-names: Omar Manil
+      family-names: Bendali
+    - given-names: Emmanuel
+      family-names: Vincent
+    - given-names: Brij Mohan Lal
+      family-names: Srivastava
+  collection-title: "Proceedings of Interspeech 2026"
+  publisher:
+    name: ISCA
+  year: 2026

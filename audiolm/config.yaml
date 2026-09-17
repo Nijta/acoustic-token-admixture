@@ -1,0 +1,9 @@
+
+coarse_transformer:
+  num_semantic_tokens: 144
+  codebook_size: 1024
+  num_coarse_quantizers: 8
+  dim: 512
+  depth: 6
+  rel_pos_bias: false
+  flash_attn: true

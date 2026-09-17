@@ -1,0 +1,58 @@
+model_type: openai/whisper-large-v2
+
+quantization:
+  dim: 1280
+  codebook_size: 1024
+  num_quantizers: 8
+  decay: 0.8
+  commitment_weight: 0.6
+  init_iter: 100
+
+finetuning:
+  # Each entry is a JSON manifest of (audio path, transcript) pairs. The paper
+  # uses Common Voice 17, LibriTTS, TED-LIUM and VoxPopuli filtered with the MOS
+  # policy (wv-mos > 3.3, < 10 min per speaker). Point these at your own copies.
+  datasets:
+    - data/metadata/CV17_english_mos33_0m_10m.json
+    - data/metadata/LT_english_mos33_0m_10m.json
+    - data/metadata/TED_english_mos33_0m_10m.json
+    - data/metadata/VP_english_mos33_0m_10m.json
+  output_dir: ./exp/whisper_largev2_rvq8_en
+  resume_from_checkpoint: False
+  data_limit: 10000000
+  valid_data_limit: 128
+  train_batch_size: 32
+  eval_batch_size: 32
+  learning_rate: 0.0001
+  max_grad_norm: 1.0
+  warmup_steps: 50
+  max_steps: 1000
+  max_length: 225
+  save_steps: 250
+  eval_steps: 250
+  valid_steps: 100
+  logging_steps: 25
+
+
+
+evaluation:
+  datasets:
+    # MLS:
+      # - french
+      # - german
+      # - spanish
+    # VF:
+      # - french
+    CV17:
+      - french
+      # - german
+      # - spanish
+      # - english
+    # VPF:
+      # - french
+    # VP:
+      # - english
+
+  data_limit: 160
+  batch_size: 16
+  # streaming: True

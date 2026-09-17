@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "py-nijta-whisper"
+version = "0.1.0"
+description = ""
+authors = ["Ali Golmakani <ali.golmakani@nijta.com>"]
+readme = "README.md"
+packages = [
+    {include = "rvqwhisper", from="src"},
+    {include = "rvqwhisper_training", from="src"}
+]
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+torch = "2.3.1"
+torchaudio = "2.3.1"
+transformers = "4.43.3"
+peft = "0.11"
+vector-quantize-pytorch = "1.17.8"
+tqdm = "4.66.4"
+numpy = "1.26.3"
+evaluate = "0.4.2"
+setuptools = "^75.1.0"
+bitsandbytes = "0.43.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.28.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

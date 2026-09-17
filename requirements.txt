@@ -1,0 +1,61 @@
+# Tested with Python 3.11 and a CUDA GPU.
+# Versions for the core stack follow rvqwhisper/pyproject.toml; install the
+# torch/torchaudio build matching your CUDA version first if needed.
+
+# Core
+torch==2.3.1
+torchaudio==2.3.1
+numpy==1.26.3
+scipy
+soundfile
+librosa
+matplotlib
+pyyaml
+tqdm
+packaging
+typing_extensions
+
+# RVQ-Whisper (Stream A) and transcription
+transformers==4.43.3
+peft==0.11
+vector-quantize-pytorch==1.17.8
+faster-whisper
+bitsandbytes==0.43.1
+
+# Phoneme pipeline and aligner (Stream B)
+transphone
+scikit-learn
+setuptools
+
+# Phoneme-conditioned token generator (audiolm/)
+beartype
+einops
+accelerate
+ema-pytorch
+local-attention
+gateloop-transformer
+pytorch-warmup
+wandb
+
+# Pseudospeaker and F0
+speechbrain
+kaldiio
+joblib
+pyworld
+AMFM-decompy
+
+# BigVGAN vocoder (training extras: pesq, auraloss, nnAudio, tensorboard)
+huggingface-hub
+pesq
+auraloss
+nnAudio
+tensorboard
+
+# Gradio demo (app.py)
+gradio
+
+# Training utilities for RVQ-Whisper (optional)
+datasets
+evaluate
+pydub
+requests
