@@ -137,6 +137,9 @@ class Pool:
         # Filter the clusters by gender
         clusters = [c for c in self.clustering_info['density_rank']
                     if self.clustering_info['gender'][c] == gender]
+        # Never take more than half of the clusters, otherwise the sparse and dense
+        # shortlists overlap (identical when top_n >= number of clusters).
+        top_n = max(1, min(top_n, len(clusters) // 2))
         # Select the n more dense/sparse according to the criterion
         if criterion == CRITERION_CLUSTER_SPARSE:
             clusters = clusters[:top_n]

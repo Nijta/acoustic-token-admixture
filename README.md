@@ -163,7 +163,8 @@ models/
 ├── BigVGAN/      config.json, generator_english, generator_french
 ├── Aligner/      aligner_english.pth, aligner_french.pth, dur_predictor.pt, f0_predictor.pth
 ├── AudioLM/      config.yaml, audiolm_english.pt, audiolm_french.pt
-└── POOL/english/ speaker pool: x-vectors, speaker-to-gender map, cluster indices, pitch statistics
+├── POOL/english/ speaker pool: x-vectors, speaker-to-gender map, cluster indices, pitch statistics
+└── POOL/french/  French speaker pool (optional)
 ```
 
 The French checkpoints are optional and were not evaluated in the paper.

@@ -51,6 +51,8 @@ FRENCH_FILES = [
     "BigVGAN/generator_french",
     "Aligner/aligner_french.pth",
     "AudioLM/audiolm_french.pt",
+    "POOL/french/spk2gender",
+    "POOL/french/xvectors/spk_xvector.ark",
 ]
 
 RESULTS = []
@@ -186,6 +188,14 @@ def check_pool():
         if ps.xvector.shape != (192,) or not np.isfinite(ps.xvector).all():
             raise ValueError(f"bad pseudospeaker for criterion {crit}")
     record("pseudospeaker strategies", "PASS", "random, sparse and dense all produce 192-d x-vectors")
+    same = 0
+    for seed in range(20):
+        for g in ("m", "f"):
+            a = nps.generate_pseudospeaker(pool, n_speakers=2, gender=g, criterion="cluster_sparse", seed=seed)
+            b = nps.generate_pseudospeaker(pool, n_speakers=2, gender=g, criterion="cluster_dense", seed=seed)
+            same += bool(np.allclose(a.xvector, b.xvector))
+    record("sparse differs from dense", "PASS" if same == 0 else "FAIL",
+           f"{same} of 40 seed/gender pairs gave the same pseudospeaker for both strategies")
 
 
 @check("french checkpoints")
@@ -215,9 +225,12 @@ def check_french():
         rvq_config_path=f"{m}/RVQWhisper/config.yaml",
         rvq_model_path=f"{m}/RVQWhisper/rvq_model_fr.pth", lang="fra")
     del alw
+    import pspi.pseudospeaker as nps
+    fr_pool = nps.Pool.load(f"{m}/POOL/french")
+    assert {v.shape[0] for v in fr_pool.xvectors.values()} == {192}, "French pool x-vectors are not 192-d"
     torch.cuda.empty_cache()
     timed("startup", "load French checkpoints (all four)", time.perf_counter() - t_fr)
-    record("french checkpoints", "PASS", "RVQ, BigVGAN, AudioLM and aligner load with matching shapes")
+    record("french checkpoints", "PASS", f"RVQ, BigVGAN, AudioLM, aligner and pool ({len(fr_pool.xvectors)} speakers) load")
 
 
 def ecapa_similarity(si, a, b):
