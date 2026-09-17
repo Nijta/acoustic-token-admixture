@@ -119,6 +119,7 @@ so it measures pseudospeaker consistency. MOS is predicted with wv-mos.
 ├── audiolm/                # phoneme-conditioned autoregressive RVQ token decoder
 ├── bigvgan/                # BigVGAN vocoder, admixture, F0 transform
 ├── pspi/                   # pseudospeaker pool, selection and pitch utilities
+├── scripts/                # model download + release verification (timing, cost)
 └── docs/                   # audio samples page (GitHub Pages)
 ```
 
@@ -142,27 +143,48 @@ model and the Transphone G2P model are downloaded automatically.
 
 ## Model weights
 
-> **Coming soon.** The trained checkpoints and the pseudospeaker pool will be
-> released on Hugging Face. This section will link to them once they are
-> available. Watch or star the repository to be notified.
+The trained checkpoints and the pseudospeaker pool are on Hugging Face:
+**[brijsri/acoustic-token-admixture](https://huggingface.co/brijsri/acoustic-token-admixture)**
+(CC BY-NC 4.0, 1.6 GB with the French models, 0.9 GB without).
 
-The scripts read all checkpoints from `$MODELS_DIR` (default: `./models`):
+```bash
+scripts/download_models.sh models                 # English + French
+ENGLISH_ONLY=1 scripts/download_models.sh models  # English only
+export MODELS_DIR=$PWD/models
+```
+
+The script downloads with `hf download` and checks every file against
+`SHA256SUMS`. The resulting layout is what the code expects in `$MODELS_DIR`
+(default: `./models`):
 
 ```
 models/
-├── RVQWhisper/   config.yaml, rvq_model_en.pth  (rvq_model_fr.pth is optional)
-├── BigVGAN/      config.json, generator_english
-├── Aligner/      aligner_english.pth
-├── AudioLM/      config.yaml, audiolm_english.pt
-└── POOL/english/ speaker pool: x-vectors, speaker-to-gender map, clustering, pitch statistics
+├── RVQWhisper/   config.yaml, rvq_model_en.pth, rvq_model_fr.pth
+├── BigVGAN/      config.json, generator_english, generator_french
+├── Aligner/      aligner_english.pth, aligner_french.pth, dur_predictor.pt, f0_predictor.pth
+├── AudioLM/      config.yaml, audiolm_english.pt, audiolm_french.pt
+└── POOL/english/ speaker pool: x-vectors, speaker-to-gender map, cluster indices, pitch statistics
 ```
+
+The French checkpoints are optional and were not evaluated in the paper.
+
+### Check your installation
+
+`scripts/verify_release.py` runs the whole pipeline on a folder of wav files
+and writes a PASS/WARN/FAIL report. It checks:
+
+- the files, their checksums and the speaker pool;
+- that the English and French checkpoints load;
+- the three paper operating points: output sanity, speaker similarity to the source, and WER;
+- speech editing and all three command-line tools.
 
 ```bash
-export MODELS_DIR=/path/to/models
+python scripts/verify_release.py --inputs-dir my_wavs --out-dir verify_out
+cat verify_out/report.md
 ```
 
-The small F0 and duration predictors used by the aligner are already included
-in `aligner/src/`.
+Put a `<name>.json` file with `{"text": "..."}` next to each `<name>.wav` to
+enable the WER checks.
 
 ## Usage
 
@@ -189,7 +211,7 @@ editing flags below.
 | `--db` | Level of the additive Gaussian noise on the F0 contour (0 disables it) | 2 |
 | `--seeds` | One pseudospeaker per seed, comma separated. An empty string keeps the source speaker's x-vector | any |
 | `--gender` | Gender of the pseudospeaker pool: `m`, `f`, or `any` (independent of the source) | `any` |
-| `--spk-cluster` | `None` for the *random* strategy, `cluster_sparse` for the *sparse* strategy, or `cluster_dense` | `None` or `cluster_sparse` |
+| `--spk-cluster` | `None` for the *random* strategy, `cluster_sparse` for the *sparse* strategy, or `cluster_dense`. The released pool has 7 female and 4 male clusters, fewer than the 10 the selector draws from, so `cluster_sparse` and `cluster_dense` currently pick from the same clusters | `None` or `cluster_sparse` |
 | `--n-speaker` | Number of pool speakers averaged into the pseudospeaker | |
 
 The cosine gate τ = 0.6 is fixed inside `BigVGANWrapper.admixture`.
@@ -261,6 +283,10 @@ the run. `static_infer_multi.py` has similar options and replaces `--workers`
 with `--model-procs N --threads-per-model M`, which sets how many model copies
 share the GPU(s). Run `--help` on either script for the full list.
 
+> The cosine gate (τ = 0.6) is on by default in every script. Pass
+> `--no-cosine-gate` to the batch scripts to turn it off, for example to
+> measure its effect.
+>
 > The F0 transform in `static_infer_batch.py` applies to every β in the sweep.
 > To match the paper's β = 0.0 and 0.3 rows, run those with `--pitch-f 0 --db 0`.
 
@@ -269,6 +295,29 @@ share the GPU(s). Run `--help` on either script for the full list.
 ```bash
 python app.py
 ```
+
+## Performance
+
+Measured with `scripts/verify_release.py` on 20 LibriSpeech utterances
+(4.3 to 8.6 s) on a single NVIDIA T4 (16 GB), PyTorch 2.3.1, one file at a
+time. RTF is processing time divided by audio duration.
+
+| Stage | Warm mean per file | RTF |
+|---|--:|--:|
+| Model loading (English, once) | 9.3 s | |
+| Pitch extraction | 0.05 s | 0.009 |
+| RVQ-Whisper tokens | 0.34 s | 0.059 |
+| Whisper transcription | 1.45 s | 0.253 |
+| G2P, alignment, articulatory features | 0.68 s | 0.118 |
+| Stream B token generation | 8.72 s | 1.515 |
+| Admixture | 0.13 s | 0.022 |
+| BigVGAN synthesis | 1.18 s | 0.206 |
+| **End to end** | **12.55 s** | **2.18** |
+| Replace one word and resynthesize | 9.9 s | 2.10 |
+
+Peak GPU memory was 5.7 GB. Autoregressive Stream B generation takes about
+70% of the time; its cost is the same for every β, because the tokens are
+generated before mixing.
 
 ## Training
 

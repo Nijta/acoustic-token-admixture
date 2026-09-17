@@ -104,11 +104,11 @@ class BigVGANWrapper:
             if not model_path.is_file():
                 model_path = model_path / "peft_model.pth"
             if not model_path.exists():
-                raise (
+                raise ModelNotFoundError(
                     f"Model could not be found at specified location: {str(model_path)}"
                 )
         except TypeError:
-            raise (
+            raise ModelNotFoundError(
                 f"Specified location for model is not valid: {str(model_path)}"
             )
         return torch.load(model_path)

@@ -25,7 +25,7 @@ bitsandbytes==0.43.1
 # Phoneme pipeline and aligner (Stream B)
 transphone
 scikit-learn
-setuptools
+setuptools<81  # pyworld still imports pkg_resources
 
 # Phoneme-conditioned token generator (audiolm/)
 beartype
@@ -38,7 +38,7 @@ pytorch-warmup
 wandb
 
 # Pseudospeaker and F0
-speechbrain
+speechbrain>=1.0,<1.1  # 1.1 needs torch>=2.4
 kaldiio
 joblib
 pyworld

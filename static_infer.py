@@ -35,7 +35,7 @@ from pspi.pitch import extract as pitch_extract
 
 from content_editing import apply_graft_replacement, words_to_prefix_suffix, FPS
 
-from speechbrain.pretrained import EncoderClassifier
+from speechbrain.inference.speaker import EncoderClassifier
 
 
 # -------------------------------
@@ -226,6 +226,9 @@ def seed_specific_anonymization(
         seed=seed
     )
     timing_seed["pseudospeaker generation"] = time.perf_counter() - t
+
+    # Seed the per-frame admixture draw and the F0 noise so a seed gives a repeatable output.
+    np.random.seed(seed)
 
     t = time.perf_counter()
     final_bottleneck, _corr = model_state.BW.admixture(

@@ -102,7 +102,7 @@ model_state = ModelState()
 # -------------------------------
 # SET UP ORIGINAL SPEAKER EMBEDDING EXTRACTOR
 # -------------------------------
-from speechbrain.pretrained import EncoderClassifier
+from speechbrain.inference.speaker import EncoderClassifier
 original_speaker_extractor = EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
 
 # -------------------------------

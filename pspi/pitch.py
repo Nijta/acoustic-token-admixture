@@ -9,9 +9,7 @@ import logging
 import sys
 
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+logger = logging.getLogger(__name__)
 
 import numpy as np
 import scipy.io.wavfile

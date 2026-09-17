@@ -7,6 +7,7 @@ data/
 
 # Runtime outputs
 outputs/
+verify_out/
 tmp/
 *.npz
 session.pkl

@@ -20,6 +20,9 @@ import os
 
 # Root of the released checkpoints and speaker pool (see README, "Model weights").
 MODELS_DIR = os.environ.get("MODELS_DIR", "models")
+# Cosine-similarity gate (tau = 0.6, paper Sec. 2.2). Workers read it from the
+# environment so that it reaches spawned processes; see --no-cosine-gate.
+COSINE_GATE = os.environ.get("ATA_COSINE_GATE", "1") != "0"
 import glob
 import time
 import pickle
@@ -41,7 +44,7 @@ import torch
 # -------------------------------
 from aligner.src import AlignerWrapper
 from rvqwhisper.src.rvqwhisper import RVQFasterWhisperWrapper
-from bigvgan.src.bigvgan import BigVGANWrapper
+from bigvgan import BigVGANWrapper
 
 import sys
 sys.path.insert(0, "./audiolm")
@@ -218,7 +221,7 @@ def get_model_state() -> ModelState:
 # Speaker extractor lazy load (used for original-speaker branch)
 @lru_cache(maxsize=1)
 def get_original_speaker_extractor():
-    from speechbrain.pretrained import EncoderClassifier
+    from speechbrain.inference.speaker import EncoderClassifier
     return EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
 
 def extract_original_xvector(input_wav_path: str) -> np.ndarray:
@@ -360,7 +363,7 @@ def seed_specific_anonymization(
     t = time.perf_counter()
     with _maybe_lock():
         final_bottleneck, _corr = ms.BW.admixture(
-            common_data["tokens"], common_data["tokens_syn"], admixture_ratio, block_hallucination=False
+            common_data["tokens"], common_data["tokens_syn"], admixture_ratio, block_hallucination=COSINE_GATE
         )
     timing_seed["admixture"] = time.perf_counter() - t
 
@@ -457,7 +460,7 @@ def process_file_worker(
 
             with _maybe_lock():
                 final_bottleneck, _corr = get_model_state().BW.admixture(
-                    common_data["tokens"], common_data["tokens_syn"], adm, block_hallucination=False
+                    common_data["tokens"], common_data["tokens_syn"], adm, block_hallucination=COSINE_GATE
                 )
                 array, sample_rate = get_model_state().BW.synthesize(
                     final_bottleneck, original_xvector, common_data["pitch"], chunk_size=100
@@ -879,7 +882,13 @@ def main():
     ap.add_argument("--replace-out", type=str, default=None,
                     help="Output wav path for replaced audio (default: <output-dir>/<result>_replaced.wav).")
 
+    ap.add_argument("--no-cosine-gate", action="store_true",
+                    help="Disable the cosine-similarity gate that rejects hallucinated phoneme-derived tokens.")
     args = ap.parse_args()
+    if args.no_cosine_gate:
+        global COSINE_GATE
+        COSINE_GATE = False
+        os.environ["ATA_COSINE_GATE"] = "0"
     # breakpoint()
     input_paths = collect_inputs(args.inputs, args.input_list, args.input_dir, args.glob, args.recursive)
     if not input_paths:

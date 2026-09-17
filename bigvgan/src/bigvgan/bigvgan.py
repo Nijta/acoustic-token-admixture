@@ -16,7 +16,7 @@ from torch.nn.utils import weight_norm, remove_weight_norm
 
 from . import activations
 from .bvg_utils import init_weights, get_padding
-from ..alias_free_activation.torch.act import Activation1d as TorchActivation1d
+from alias_free_activation.torch.act import Activation1d as TorchActivation1d
 from .env import AttrDict
 
 from huggingface_hub import PyTorchModelHubMixin, hf_hub_download
