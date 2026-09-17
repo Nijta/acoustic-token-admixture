@@ -16,16 +16,62 @@ Ali Golmakani<sup>1</sup>, Seyed Ahmad Hosseini<sup>1</sup>, Omar Manil Bendali<
 
 ## Overview
 
-Speech recordings from healthcare, legal and enterprise settings leak identity
-through two independent channels:
+### The problem: reusable recordings that still identify people
 
-1. **Biometric**: the voice itself, which speaker verification (ASV) systems exploit.
-2. **Linguistic**: named entities and stylometric cues in *what* is said.
+Take a contact centre, a hospital or a law firm that wants to fine-tune a speech
+recognizer on its own calls. The recordings are valuable because they sound
+like the real deployment: the phone line, the background noise, the accents,
+the hesitations, the domain vocabulary. They are also personal data, and they
+identify the caller in two independent ways:
 
-Existing systems handle these separately and usually re-synthesize the whole
-utterance. That discards the in-domain acoustics that make the data valuable
-for training. This work handles both channels **inside a single acoustic token
-space** and edits only the frames that need to change.
+1. **Biometric:** the voice itself, which a speaker verification (ASV) system can match.
+2. **Linguistic:** what is said, especially names, places and other identifiers.
+
+An illustrative call:
+
+> *"Hi, this is **Maria Lopez**, calling from **Lyon** about my appointment with **Dr. Martin**."*
+
+Reusing this call under GDPR or HIPAA means changing the voice **and** the three
+names, while keeping everything else useful for training.
+
+### What existing approaches do to that call
+
+| Approach | Published systems | How the audio is regenerated | Result on the example call |
+|---|---|---|---|
+| Voice anonymization | VoicePrivacy 2024 baselines B1, B3 to B6 [[1]](#references); kNN-VC [[2]](#references) | Extract content features (ASR bottleneck, phones, HuBERT or WavLM units), then **resynthesize the whole utterance** with an NSF vocoder, FastSpeech2 + HiFi-GAN, an EnCodec token model, or HiFi-GAN | New voice, but *"Maria Lopez"*, *"Lyon"* and *"Dr. Martin"* are still spoken, word for word |
+| Signal processing | McAdams coefficient, VPC B2 [[3]](#references) | LPC pole shifting, no model | Same as above, and weak against an informed attacker |
+| Content masking | Phone-code masking [[4]](#references) | Replace sensitive spans with masked or unintelligible audio | Names removed, but the audio and its transcript are broken at those spans, which hurts ASR training |
+| Transcript rewriting | NER substitution [[5]](#references), LLM paraphrasing [[6]](#references), style paraphrasing [[7]](#references) | ASR, edit or paraphrase the text, then **text-to-speech for the whole utterance** | Names replaced, but the entire call is now clean TTS: channel, noise, accent, timing and disfluencies are gone |
+| Utterance routing | JHU HLTCOE [[8]](#references) | Each utterance goes either through Whisper + VITS TTS or through kNN-VC | Every frame is regenerated; there is no way to edit only the names |
+
+In every row, either the names survive or the whole utterance is regenerated.
+Regenerating everything strips out exactly the in-domain character that made
+the recordings worth keeping.
+
+### Our approach: anonymization as speech editing
+
+The missing capability is **speech editing**: change only the words that
+matter and keep the rest. Text-based speech editors already do this for
+content creation. A³T [[9]](#references), FluentSpeech [[10]](#references) and VoiceCraft [[11]](#references) mask a span and
+regenerate it from new text, conditioned on the surrounding audio. They are
+built to keep the original speaker's voice, which is the opposite of what
+privacy needs.
+
+This work brings span-level editing into a speaker anonymization pipeline,
+with both edits made in one acoustic token space (RVQ-Whisper tokens):
+
+- **Voice:** a pseudospeaker replaces the speaker's identity, and per-frame token admixture removes residual speaker cues.
+- **Content:** NER finds the three names, and only their frames are regenerated from replacement text, with an 8-frame crossfade at each edge.
+- **Everything else:** the other frames keep their original tokens and timing, so the rhythm and pauses of the call survive. The vocoder renders the whole utterance in the pseudospeaker's voice.
+
+On the example call, the output would say *"Hi, this is **Sarah Miller**, calling
+from **Leeds** about my appointment with **Dr. Evans**"*, in a different voice,
+with the rest of the call unchanged in timing.
+
+The call above is only an illustration. For real outputs, listen to the
+[speech editing samples](https://nijta.github.io/acoustic-token-admixture/#speech-editing),
+for example *"However, **Jaime Alguersuari** failed to score any points in the
+season"* edited to *"**David Jones**"* and *"**Victor Smith**"*.
 
 **Contributions**
 
@@ -383,6 +429,20 @@ you release data.
   year      = {2026}
 }
 ```
+
+## References
+
+1. N. Tomashenko et al., "The VoicePrivacy 2024 Challenge Evaluation Plan," [arXiv:2404.02677](https://arxiv.org/abs/2404.02677), 2024.
+2. M. Baas, B. van Niekerk, H. Kamper, "Voice Conversion With Just Nearest Neighbours," Interspeech 2023.
+3. J. Patino, N. Tomashenko, M. Todisco et al., "Speaker Anonymisation Using the McAdams Coefficient," Interspeech 2021.
+4. J. Williams, K. Pizzi, P.-G. Noé et al., "Exploratory Evaluation of Speech Content Masking," 15th ITG Symposium on Speech Communication, 2023.
+5. T. Turan, D. Klakow, E. Vincent et al., "Adapting Language Models When Training on Privacy-Transformed Data," LREC 2022.
+6. C. Aggazzotti, M. Wiesner, E. Smith et al., "Content Anonymization for Privacy in Long-Form Audio," ICASSP 2026.
+7. Y. Sinha, M. Raivakhovskyi, M. Schubert et al., "Safeguarding Speech Content Style: Enhancing Privacy Beyond Speaker Identity," SPSC 2024.
+8. H. L. Xinyuan et al., "HLTCOE Submission to the VoicePrivacy Attacker Challenge," ICASSP 2025, [doi:10.1109/ICASSP49660.2025.10888439](https://doi.org/10.1109/ICASSP49660.2025.10888439).
+9. H. Bai et al., "A³T: Alignment-Aware Acoustic and Text Pretraining for Speech Synthesis and Editing," ICML 2022, [arXiv:2203.09690](https://arxiv.org/abs/2203.09690).
+10. Z. Jiang et al., "FluentSpeech: Stutter-Oriented Automatic Speech Editing with Context-Aware Diffusion Models," Findings of ACL 2023, [arXiv:2305.13612](https://arxiv.org/abs/2305.13612).
+11. P. Peng et al., "VoiceCraft: Zero-Shot Speech Editing and Text-to-Speech in the Wild," ACL 2024, [arXiv:2403.16973](https://arxiv.org/abs/2403.16973).
 
 ## License and acknowledgements
 
