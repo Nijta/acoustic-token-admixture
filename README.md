@@ -217,9 +217,9 @@ editing flags below.
 
 The cosine gate τ = 0.6 is fixed inside `BigVGANWrapper.admixture`.
 
-**Regenerating the published samples.** The speaker consistency clips from male
-speakers on the [samples page](https://nijta.github.io/acoustic-token-admixture/)
-are reproduced (ECAPA similarity 0.77 to 0.90 to the published clip) with:
+**Regenerating the published samples.** All 16 speaker consistency clips on the
+[samples page](https://nijta.github.io/acoustic-token-admixture/) are reproduced
+(ECAPA similarity 0.79 to 0.94 to the published clip, mean 0.86) with:
 
 ```bash
 python static_infer.py --inputs input.wav --output-dir out \
@@ -227,8 +227,8 @@ python static_infer.py --inputs input.wav --output-dir out \
   --admixture-ratio 0.7 --pitch-f 0.75 --db 2
 ```
 
-The clips from female speakers were made with settings we have not yet
-recovered.
+Replace `input.wav` with the page inputs (LibriSpeech speakers). Female-source clips
+made with other settings are not part of the page.
 
 **Paper operating points**
 
