@@ -6,7 +6,7 @@
 #        ENGLISH_ONLY=1 scripts/download_models.sh  (skip the French checkpoints)
 set -euo pipefail
 
-REPO_ID="brijsri/acoustic-token-admixture"
+REPO_ID="nijta/acoustic-token-admixture"
 TARGET="${1:-models}"
 
 if ! command -v hf >/dev/null 2>&1; then

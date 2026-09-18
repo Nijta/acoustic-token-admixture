@@ -190,7 +190,7 @@ model and the Transphone G2P model are downloaded automatically.
 ## Model weights
 
 The trained checkpoints and the pseudospeaker pool are on Hugging Face:
-**[brijsri/acoustic-token-admixture](https://huggingface.co/brijsri/acoustic-token-admixture)**
+**[nijta/acoustic-token-admixture](https://huggingface.co/nijta/acoustic-token-admixture)**
 (CC BY-NC 4.0, 1.8 GB with the French models and pool, 0.9 GB without).
 
 ```bash
